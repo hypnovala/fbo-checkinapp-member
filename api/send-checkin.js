@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { scores, notes, avg, state, body, practice, date } = req.body;
+  const { name, scores, notes, avg, state, body, practice, date } = req.body;
 
   if (!scores || avg == null || !state) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -56,6 +56,9 @@ export default async function handler(req, res) {
                   <span style="font-size:11px;color:#8B7355;">${date || new Date().toLocaleString()}</span>
                 </td>
               </tr>
+              ${name ? `<tr><td colspan="2" style="padding-top:8px;">
+                <span style="font-size:22px;font-weight:700;color:#F5EED8;font-family:Georgia,serif;">${name}</span>
+              </td></tr>` : ''}
             </table>
           </td>
         </tr>
@@ -147,6 +150,7 @@ export default async function handler(req, res) {
   // ── Plain text fallback ───────────────────────────────
   const text = [
     `BROCK CHECK-IN · LEVEL ONE BODYWORK`,
+    name ? `From: ${name}` : '',
     `Date: ${date || new Date().toLocaleString()}`,
     ``,
     `SCORE: ${avg.toFixed(1)}/10 — ${state}`,
@@ -179,7 +183,7 @@ export default async function handler(req, res) {
         from:    'Check-In App <checkin@brockjohn.com>',
         to:      ['bhhm2020@gmail.com'],
         reply_to: 'bhhm2020@gmail.com',
-        subject: `Check-In · ${state} · ${avg.toFixed(1)}/10`,
+        subject: `${name ? name + ' · ' : ''}Check-In · ${state} · ${avg.toFixed(1)}/10`,
         html,
         text,
       }),
